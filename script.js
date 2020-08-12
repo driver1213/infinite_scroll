@@ -6,10 +6,19 @@ let imagesLoaded = 0;
 let totalImages = 0;
 let photosArray = [];
 
+let isInitialLoad = true
+
 //Unsplash API
-let count = 5;
+let initialCount = 5;
 const apiKey = 'L9q2m3LaA10w65sZMqooZUbWPcWtkwkQ5eiSgtIl3x8';
-let apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`
+// let apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`
+let apiUrl = `https://api.unsplash.com/photos/random?client_id=${apiKey}&count=${initialCount}`;
+
+
+function updateAPIURLWithNewCount (picCount) {
+    apiUrl = `https://api.unsplash.com/photos/random?client_id=${apiKey}&count=${picCount}`;
+  }
+  
 
 //Check if all images were loaded
 function imageLoaded() {
@@ -17,8 +26,8 @@ function imageLoaded() {
     if (imagesLoaded === totalImages) {
         ready = true;
         loader.hidden = true;
-        count = 30
-        apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`
+        // count = 30
+        // apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`
     }
 }
 
@@ -57,15 +66,30 @@ function displayPhotos() {
 }
 
 //Get photos from Unsplash API
+// async function getPhotos() {
+//     try {
+//         const response = await fetch(apiUrl);
+//         photosArray = await response.json();
+//         displayPhotos();
+//     } catch (error) {
+//         //Catch error here
+//     }
+// }
+
 async function getPhotos() {
     try {
-        const response = await fetch(apiUrl);
-        photosArray = await response.json();
-        displayPhotos();
+      const response = await fetch(apiUrl);
+      photosArray = await response.json();
+      displayPhotos();
+      if (isInitialLoad) { // NEW LINE ****
+        updateAPIURLWithNewCount(30) // NEW LINE ****
+        isInitialLoad = false // NEW LINE ****
+      } // NEW LINE ****
     } catch (error) {
-        //Catch error here
+      // Catch Error Here
     }
-}
+  }
+  
 
 //Check to see if scrolling near bottom of page, Load More Photos
 window.addEventListener('scroll', () => {
